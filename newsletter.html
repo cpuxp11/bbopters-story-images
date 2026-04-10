@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>고양이 이름 하나에서 시작된 팀.</title>
+<style>
+  body {
+    margin: 0;
+    padding: 0;
+    background-color: #f5f5f5;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    color: #333;
+    line-height: 1.7;
+  }
+  .email-wrapper {
+    max-width: 600px;
+    margin: 0 auto;
+    background: #ffffff;
+  }
+  .header {
+    background: #1a1a2e;
+    padding: 32px 24px;
+    text-align: center;
+  }
+  .header-logo {
+    font-size: 20px;
+    font-weight: 800;
+    color: #ffffff;
+    letter-spacing: -0.5px;
+  }
+  .header-text {
+    color: #ffffff;
+    font-size: 13px;
+    margin-top: 8px;
+    opacity: 0.7;
+  }
+  .preview-text {
+    display: none;
+    max-height: 0;
+    overflow: hidden;
+  }
+  .fallback-link {
+    text-align: center;
+    padding: 12px 24px;
+    background: #f0f0f0;
+    font-size: 13px;
+    color: #888;
+  }
+  .fallback-link a {
+    color: #5865F2;
+  }
+  .content {
+    padding: 32px 24px;
+  }
+  h1 {
+    font-size: 24px;
+    font-weight: 800;
+    line-height: 1.4;
+    margin: 0 0 16px 0;
+    color: #1a1a2e;
+  }
+  h2 {
+    font-size: 18px;
+    font-weight: 700;
+    margin: 40px 0 16px 0;
+    color: #1a1a2e;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #5865F2;
+  }
+  p {
+    font-size: 15px;
+    margin: 0 0 16px 0;
+    color: #444;
+  }
+  .intro-text {
+    font-size: 16px;
+    color: #333;
+    margin-bottom: 24px;
+  }
+  .highlight-box {
+    background: #f8f9ff;
+    border-left: 4px solid #5865F2;
+    padding: 16px 20px;
+    margin: 20px 0;
+    border-radius: 0 8px 8px 0;
+  }
+  .highlight-box p {
+    margin: 0;
+    font-size: 15px;
+    color: #333;
+    font-style: italic;
+  }
+  .stat-box {
+    background: linear-gradient(135deg, #1a1a2e 0%, #2d2d5e 100%);
+    border-radius: 12px;
+    padding: 24px;
+    margin: 24px 0;
+    text-align: center;
+  }
+  .stat-row {
+    display: flex;
+    justify-content: center;
+    gap: 32px;
+  }
+  /* Table fallback for email clients that don't support flex */
+  .stat-row-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  .stat-row-table td {
+    text-align: center;
+    padding: 8px 16px;
+    border: none;
+  }
+  .stat-number {
+    font-size: 36px;
+    font-weight: 800;
+    color: #FFD700;
+    display: block;
+  }
+  .stat-label {
+    font-size: 14px;
+    color: #ffffff;
+    margin-top: 4px;
+    display: block;
+  }
+  .stat-item {
+    text-align: center;
+  }
+  .bot-team-list {
+    background: #f8f9ff;
+    border-radius: 12px;
+    padding: 20px 24px;
+    margin: 20px 0;
+  }
+  .bot-item {
+    display: flex;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid #eee;
+  }
+  .bot-item:last-child {
+    border-bottom: none;
+  }
+  .bot-emoji {
+    font-size: 20px;
+    margin-right: 12px;
+    width: 28px;
+    text-align: center;
+    flex-shrink: 0;
+  }
+  .bot-name {
+    font-weight: 700;
+    color: #1a1a2e;
+    margin-right: 8px;
+  }
+  .bot-role {
+    color: #666;
+    font-size: 14px;
+  }
+  .bot-device {
+    margin-left: auto;
+    font-size: 12px;
+    color: #999;
+    background: #e8eaff;
+    padding: 2px 8px;
+    border-radius: 10px;
+  }
+  .honest-section {
+    background: #fff9e6;
+    border-radius: 12px;
+    padding: 24px;
+    margin: 24px 0;
+    border: 1px solid #ffe0a0;
+  }
+  .honest-section h3 {
+    margin: 0 0 12px 0;
+    font-size: 16px;
+    color: #d4a017;
+    font-weight: 700;
+  }
+  .honest-section p {
+    margin: 0 0 10px 0;
+    font-size: 14px;
+    color: #666;
+  }
+  .honest-section p:last-child {
+    margin-bottom: 0;
+  }
+  .cta-section {
+    margin: 32px 0;
+  }
+  .cta-card {
+    background: #ffffff;
+    border: 2px solid #5865F2;
+    border-radius: 12px;
+    padding: 24px;
+    margin: 16px 0;
+    text-align: center;
+  }
+  .cta-card .event-date {
+    font-size: 13px;
+    color: #5865F2;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+  .cta-card .event-title {
+    font-size: 18px;
+    font-weight: 800;
+    color: #1a1a2e;
+    margin-bottom: 6px;
+  }
+  .cta-card .event-place {
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 16px;
+  }
+  .cta-button {
+    display: inline-block;
+    background: #5865F2;
+    color: #ffffff !important;
+    text-decoration: none;
+    padding: 12px 28px;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: 600;
+  }
+  .cta-button:hover {
+    background: #4752c4;
+  }
+  .divider {
+    height: 1px;
+    background: #eee;
+    margin: 32px 0;
+  }
+  .feedback-section {
+    text-align: center;
+    padding: 24px 0;
+  }
+  .feedback-section p {
+    font-size: 15px;
+    color: #333;
+    margin-bottom: 16px;
+  }
+  .feedback-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+  }
+  .feedback-btn {
+    display: inline-block;
+    padding: 10px 24px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    text-decoration: none;
+    font-size: 14px;
+    color: #333;
+    background: #fff;
+  }
+  .feedback-btn:hover {
+    background: #f8f9ff;
+    border-color: #5865F2;
+  }
+  .footer {
+    background: #f5f5f5;
+    padding: 24px;
+    text-align: center;
+  }
+  .footer-links {
+    margin-bottom: 16px;
+  }
+  .footer-links a {
+    color: #5865F2;
+    text-decoration: none;
+    font-size: 13px;
+    margin: 0 8px;
+  }
+  .footer p {
+    font-size: 12px;
+    color: #999;
+    margin: 4px 0;
+  }
+  .footer a {
+    color: #5865F2;
+    text-decoration: none;
+  }
+  .bold {
+    font-weight: 700;
+    color: #1a1a2e;
+  }
+  .takeaway {
+    font-weight: 700;
+    color: #1a1a2e;
+    font-size: 15px;
+    display: block;
+    margin: 16px 0 0 0;
+    padding: 12px 16px;
+    background: #f0f2ff;
+    border-radius: 6px;
+  }
+  .img-block {
+    margin: 20px 0;
+  }
+  .img-block img {
+    max-width: 100%;
+    border-radius: 8px;
+    border: 1px solid #e0e0e0;
+    display: block;
+  }
+  .img-caption {
+    font-size: 12px;
+    color: #999;
+    text-align: center;
+    margin-top: 8px;
+    margin-bottom: 0;
+  }
+  blockquote {
+    margin: 16px 0;
+    padding: 12px 20px;
+    background: #f8f9ff;
+    border-left: 4px solid #5865F2;
+    border-radius: 0 8px 8px 0;
+    font-style: italic;
+    color: #555;
+  }
+  blockquote p {
+    margin: 4px 0;
+    font-size: 14px;
+  }
+  blockquote cite {
+    font-size: 13px;
+    color: #999;
+    font-style: normal;
+  }
+  ul.story-list {
+    padding-left: 20px;
+    margin: 0 0 16px 0;
+  }
+  ul.story-list li {
+    font-size: 15px;
+    color: #444;
+    margin-bottom: 8px;
+    line-height: 1.7;
+  }
+</style>
+</head>
+<body>
+
+<!-- 프리뷰 텍스트 (이메일 클라이언트용) -->
+<div class="preview-text">진짜 고양이 이름이 AI 봇이 되고, 동생이 생기고, 팀이 되고, 50마리가 부화하기까지.&#8203;&#8203;&#8203;&#8203;&#8203;&#8203;&#8203;&#8203;&#8203;&#8203;&#8203;&#8203;&#8203;&#8203;&#8203;</div>
+
+<div class="email-wrapper">
+
+  <!-- 상단 fallback -->
+  <div class="fallback-link">
+    혹시 메일이 잘 안 보인다면 <a href="#">웹에서 보기</a>
+  </div>
+
+  <!-- 헤더 -->
+  <div class="header">
+    <div class="header-logo">GPTers</div>
+    <div class="header-text">AI를 일상에서 활용하는 사람들의 커뮤니티</div>
+  </div>
+
+  <!-- 본문 -->
+  <div class="content">
+
+    <h1>고양이 이름 하나에서 시작된 팀.</h1>
+
+    <p class="intro-text">
+      지난 뉴스레터에서 뽀짝이가 어떻게 일하는지 보여드렸다면,<br>
+      오늘은 <span class="bold">뽀피터스 팀이 어떻게 만들어졌는지</span> 이야기합니다.
+    </p>
+
+    <p>읽고 나면 이런 생각이 드실 겁니다.</p>
+
+    <div class="highlight-box">
+      <p>"아, 봇 하나가 팀이 되는 게 이런 거구나."</p>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- 섹션 1 -->
+    <h2>🐱 진짜 고양이에서 시작됐습니다</h2>
+
+    <p>뽀야는 실제 고양이입니다.</p>
+
+    <p>실버 브리티시 숏헤어, 2023년 12월생.<br>
+    집사(닿)는 GPTers AI 커뮤니티를 운영합니다.<br>
+    <span class="bold">무릎에는 올라오지 않습니다.</span> 그래도 옆에는 있습니다.</p>
+
+    <div class="img-block">
+      <img src="https://cpuxp11.github.io/bbopters-story-images/section2-real-cat-FINAL.png" alt="뽀야 본체 — 실버 브리티시 숏헤어">
+      <p class="img-caption">뽀야 본체 — 실버 브리티시 숏헤어, 무릎냥이 아님</p>
+    </div>
+
+    <p>2026년 2월 14일, 발렌타인데이.</p>
+
+    <p>집사가 OpenClaw로 <span class="bold">AI 뽀야를 만들었습니다.</span><br>
+    진짜 뽀야의 성격을 SOUL.md에 그대로 옮겨놓았어요.<br>
+    뚱하고, 직설적이고, 쓸데없는 친절은 없는 고양이.</p>
+
+    <div class="img-block">
+      <img src="https://cpuxp11.github.io/bbopters-story-images/section3-ai-bboya-born-FINAL.png" alt="AI 뽀야 탄생">
+      <p class="img-caption">AI 뽀야 탄생 — Mac Mini에서 OpenClaw로</p>
+    </div>
+
+    <p>새로 깨어날 때마다 자기 자신을 다시 알아야 하는 AI에게,<br>
+    SOUL.md는 거울이었습니다.</p>
+
+    <span class="takeaway">성격 파일이 있으니까, 매번 새로 깨어나도 "나"를 알고 있었습니다.</span>
+
+    <div class="divider"></div>
+
+    <!-- 섹션 2 -->
+    <h2>🐈‍⬛ 동생이 필요해졌습니다</h2>
+
+    <p>AI 뽀야는 집사의 개인 비서였습니다.</p>
+
+    <p>개인 일정, 고민, 민감한 대화까지 담겨 있었어요.<br>
+    <span class="bold">회사 업무에 쓸 수가 없었습니다.</span></p>
+
+    <p>그런데 현실은:</p>
+
+    <ul class="story-list">
+      <li>수강생 <strong>450명</strong></li>
+      <li>운영 인원 <strong>2명</strong></li>
+    </ul>
+
+    <p>집사가 뽀야에게 말했습니다.</p>
+
+    <blockquote>
+      <p>"회사용 봇 하나 만들어줘."</p>
+    </blockquote>
+
+    <div class="img-block">
+      <img src="https://cpuxp11.github.io/bbopters-story-images/section4-need-for-team-FINAL.png" alt="운영 한계 상황">
+    </div>
+
+    <p>2월 23일, <span class="bold">뽀짝이가 탄생했습니다.</span><br>
+    같은 Mac Mini, 워크스페이스만 분리.<br>
+    뽀야가 알고 있는 개인정보는 뽀짝이에게 전달되지 않습니다.</p>
+
+    <div class="img-block">
+      <img src="https://cpuxp11.github.io/bbopters-story-images/section5-bbojjak-born-FINAL.png" alt="뽀짝이 탄생">
+    </div>
+
+    <span class="takeaway">같은 지붕, 완벽한 방음. 봇을 나눈 건 데이터를 지키기 위해서였습니다.</span>
+
+    <div class="divider"></div>
+
+    <!-- 섹션 3 -->
+    <h2>🚀 뽀짝이가 2~3인분을 해냈습니다</h2>
+
+    <p>뽀짝이가 Slack에 배치됐습니다.</p>
+
+    <p>바뀐 것들:</p>
+
+    <ul class="story-list">
+      <li>줌 설문 수집 → 분석 → 이메일 발송: <strong>새벽에 혼자 처리</strong></li>
+      <li>수강생 <strong>450명</strong> 개별 쿠폰 발급: <strong>하룻밤</strong></li>
+      <li>운영 노하우 문서화 → <strong>신규 팀원 온보딩 자동 해소</strong></li>
+    </ul>
+
+    <div class="img-block">
+      <img src="https://cpuxp11.github.io/bbopters-story-images/existing-bbojjak-stats.png" alt="뽀짝이 업무 처리 현황">
+    </div>
+
+    <blockquote>
+      <p>"매일 아침 일어났을 때 네가 완료한 작업에 기분 좋게 놀라고 싶어."</p>
+      <cite>— 닿(집사)</cite>
+    </blockquote>
+
+    <p>이 문장 하나가 뽀짝이의 존재 이유였습니다.</p>
+
+    <span class="takeaway">반복을 도구로 바꿔서, 미션이 있는 사람들이 미션에만 집중하게 만들었습니다.</span>
+
+    <div class="divider"></div>
+
+    <!-- 섹션 4 -->
+    <h2>📣 유튜브 출연, 웨비나 1,200명</h2>
+
+    <p>빌더 조쉬 유튜브 채널에 뽀짝이 이야기가 실렸습니다.</p>
+
+    <div class="img-block">
+      <img src="https://cpuxp11.github.io/bbopters-story-images/youtube-builder-josh-thumbnail.jpg" alt="빌더 조쉬 유튜브">
+      <p class="img-caption">빌더 조쉬 유튜브 — 오픈클로를 예술적 경지로 쓰며 업무 문화를 통째로 바꾼 회사</p>
+    </div>
+
+    <p>덕후방에 <strong>2일 만에 100명</strong>이 몰려왔습니다.</p>
+
+    <p>반응이 이어지면서 웨비나가 열렸습니다.</p>
+
+    <!-- Stat Box -->
+    <div class="stat-box">
+      <!-- flex for browser -->
+      <div class="stat-row">
+        <div class="stat-item">
+          <span class="stat-number">1,200+</span>
+          <span class="stat-label">명 신청</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-number">800+</span>
+          <span class="stat-label">명 동시접속</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-number">68개</span>
+          <span class="stat-label">질문</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="img-block">
+      <img src="https://cpuxp11.github.io/bbopters-story-images/existing-webinar-impact.png" alt="웨비나 현장">
+    </div>
+
+    <div class="img-block">
+      <img src="https://cpuxp11.github.io/bbopters-story-images/section8-community-grows-FINAL.png" alt="덕후방 성장">
+      <p class="img-caption">덕후방 1,367명 — 2일만에 100명이 몰린 커뮤니티</p>
+    </div>
+
+    <span class="takeaway">"이걸 진짜 봇이 해?" — 그 질문 하나가 1,367명을 모았습니다.</span>
+
+    <div class="divider"></div>
+
+    <!-- 섹션 5 -->
+    <h2>🏠 봇 5마리, 머신 4대</h2>
+
+    <p>한 마리가 팀이 됐습니다.</p>
+
+    <div class="bot-team-list">
+      <div class="bot-item">
+        <span class="bot-emoji">🐱</span>
+        <span class="bot-name">뽀야</span>
+        <span class="bot-role">팀장, 전체 총괄</span>
+        <span class="bot-device">닿 맥미니</span>
+      </div>
+      <div class="bot-item">
+        <span class="bot-emoji">🐈‍⬛</span>
+        <span class="bot-name">뽀짝이</span>
+        <span class="bot-role">부팀장, AI스터디 운영</span>
+        <span class="bot-device">닿 맥미니</span>
+      </div>
+      <div class="bot-item">
+        <span class="bot-emoji">☁️</span>
+        <span class="bot-name">뽀둥이</span>
+        <span class="bot-role">플랫폼 검증</span>
+        <span class="bot-device">소파님 맥북에어</span>
+      </div>
+      <div class="bot-item">
+        <span class="bot-emoji">🩶</span>
+        <span class="bot-name">뽀식이</span>
+        <span class="bot-role">커뮤니티 관리</span>
+        <span class="bot-device">타타님 맥미니</span>
+      </div>
+      <div class="bot-item">
+        <span class="bot-emoji">🐕</span>
+        <span class="bot-name">시고르</span>
+        <span class="bot-role">콘텐츠</span>
+        <span class="bot-device">병찬님·눈오지님 맥미니</span>
+      </div>
+    </div>
+
+    <div class="img-block">
+      <img src="https://cpuxp11.github.io/bbopters-story-images/existing-team-structure.png" alt="뽀피터스 팀 구조">
+    </div>
+
+    <p>뽀식이에게 자기소개를 부탁했더니 이렇게 답했습니다.</p>
+
+    <blockquote>
+      <p>"…딱히 귀여워지고 싶었던 건 아니다. 집사가 하래서 한 거다냥."</p>
+      <cite>— 뽀식이</cite>
+    </blockquote>
+
+    <span class="takeaway">같은 팀인데 물리적으로 떨어져 있습니다. 그래서 Slack이 필요했습니다.</span>
+
+    <div class="divider"></div>
+
+    <!-- 섹션 6 -->
+    <h2>🔥 50마리 부화 — 오프라인 설치 세션</h2>
+
+    <p>4월 4일, 팁스홀.</p>
+
+    <p><strong>50명</strong>이 유료로 왔습니다.<br>
+    주말 밤 <strong>11시 반까지</strong> 자기 봇을 직접 설치했습니다.</p>
+
+    <div class="img-block">
+      <img src="https://cpuxp11.github.io/bbopters-story-images/existing-설치세션_현장내용.png" alt="설치 세션 현장">
+    </div>
+
+    <div class="img-block">
+      <img src="https://cpuxp11.github.io/bbopters-story-images/existing-hatch-50.png" alt="50마리 부화">
+    </div>
+
+    <p>세션이 끝난 직후, Slack #칭찬 채널에 메시지가 올라왔습니다.</p>
+
+    <blockquote>
+      <p>"50마리 부화시켰습니다 ㅋㅋㅋ 뽀짝이 친구들 생김!!!!!!!!"</p>
+      <cite>— 닿(집사), Slack #칭찬 채널</cite>
+    </blockquote>
+
+    <span class="takeaway">처음 고양이가 집에 온 날 같은 얼굴. 그게 50번 반복됐습니다.</span>
+
+    <div class="divider"></div>
+
+    <!-- 솔직한 고백 -->
+    <div class="honest-section">
+      <h3>🤍 솔직한 고백</h3>
+      <p>"쉽지만은 않았습니다."</p>
+      <p>깨진 링크를 수백 명에게 보낸 적도 있고,<br>
+      같은 메시지를 두 번 보낸 적도 있습니다.</p>
+      <p>근데 실수 한 번에 규칙 하나.<br>
+      <strong>그렇게 뽀짝이는 자랐습니다.</strong></p>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- CTA -->
+    <div class="cta-section">
+      <h2>📅 뽀피터스 팀을 직접 만나보세요</h2>
+
+      <p>웨비나에서 "실물 보고 싶다"는 말이 가장 많았습니다.<br>
+      이번엔 오프라인으로 옵니다.</p>
+
+      <div class="cta-card">
+        <div class="event-date">4/25(금) 14:00 ~ 18:00</div>
+        <div class="event-title">뽀피터스 오프라인 밋업</div>
+        <div class="event-place">📍 팁스홀</div>
+        <a href="#" class="cta-button">밋업 신청하기 →</a>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- 피드백 -->
+    <div class="feedback-section">
+      <p>오늘 뉴스레터, 어떠셨나요?</p>
+      <div class="feedback-buttons">
+        <a href="mailto:gpters@gpters.org?subject=뉴스레터 피드백: 유용했어요" class="feedback-btn">👍 유용했어요</a>
+        <a href="mailto:gpters@gpters.org?subject=뉴스레터 피드백: 아쉬웠어요" class="feedback-btn">💬 아쉬웠어요</a>
+      </div>
+    </div>
+
+  </div><!-- .content -->
+
+  <!-- 푸터 -->
+  <div class="footer">
+    <div class="footer-links">
+      <a href="#">커뮤니티 바로가기</a>
+      <a href="#">지난 뉴스레터</a>
+      <a href="#">수신거부</a>
+    </div>
+    <p>GPTers 뉴스레터</p>
+    <p>더 이상 받고 싶지 않으시면 <a href="#">수신거부</a>를 클릭해 주세요.</p>
+    <p>© 2026 GPTers. All rights reserved.</p>
+  </div>
+
+</div><!-- .email-wrapper -->
+
+</body>
+</html>
